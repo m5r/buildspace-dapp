@@ -6,7 +6,7 @@
 	"scripts": {
 		"test": "hardhat test",
 		"start": "hardhat run scripts/run.js",
-		"deploy": "hardhat run scripts/run.js",
+		"deploy": "hardhat run scripts/deploy.js",
 		"network": "hardhat node"
 	},
 	"keywords": [],
