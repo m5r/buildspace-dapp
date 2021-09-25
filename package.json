@@ -5,7 +5,9 @@
 	"main": "index.js",
 	"scripts": {
 		"test": "hardhat test",
-		"start": "hardhat run scripts/run.js"
+		"start": "hardhat run scripts/run.js",
+		"deploy": "hardhat run scripts/run.js",
+		"network": "hardhat node"
 	},
 	"keywords": [],
 	"author": "m5r",
