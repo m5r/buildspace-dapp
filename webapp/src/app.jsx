@@ -1,8 +1,13 @@
 import * as React from "react";
 import { ethers } from "ethers";
+
+import useWallet from "./hooks/use-wallet";
+
 import "./app.css";
 
 export default function App() {
+	const { wallet, connectWallet } = useWallet();
+	console.log("wallet", wallet);
 
 	const wave = () => {
 
@@ -10,7 +15,6 @@ export default function App() {
 
 	return (
 		<div className="mainContainer">
-
 			<div className="dataContainer">
 				<div className="header">
 					👋 Hey there!
@@ -24,6 +28,12 @@ export default function App() {
 				<button className="waveButton" onClick={wave}>
 					Wave at Me
 				</button>
+
+				{!wallet ? (
+					<button className="waveButton" onClick={connectWallet}>
+						Connect Wallet
+					</button>
+				) : null}
 			</div>
 		</div>
 	);
