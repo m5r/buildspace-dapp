@@ -1,17 +1,14 @@
 import * as React from "react";
-import { ethers } from "ethers";
 
+import Counter from "./component/counter";
 import useWallet from "./hooks/use-wallet";
+import useWave from "./hooks/use-wave";
 
 import "./app.css";
 
 export default function App() {
 	const { wallet, connectWallet } = useWallet();
-	console.log("wallet", wallet);
-
-	const wave = () => {
-
-	};
+	const { wave, isWaving } = useWave();
 
 	return (
 		<div className="mainContainer">
@@ -25,8 +22,10 @@ export default function App() {
 					wallet and wave at me!
 				</div>
 
+				<Counter />
+
 				<button className="waveButton" onClick={wave}>
-					Wave at Me
+					{isWaving ? "Waving..." : "Wave at Me"}
 				</button>
 
 				{!wallet ? (

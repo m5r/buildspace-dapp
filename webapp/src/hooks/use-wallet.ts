@@ -1,9 +1,9 @@
-import * as React from "react";
+import { useState, useEffect, useCallback } from "react";
 
 export default function useWallet() {
-	const [currentAccount, setCurrentAccount] = React.useState("");
+	const [currentAccount, setCurrentAccount] = useState("");
 
-	const checkIfWalletIsConnected = React.useCallback(async () => {
+	const checkIfWalletIsConnected = useCallback(async () => {
 		const { ethereum } = window;
 		if (!ethereum) {
 			console.log("Make sure you have metamask!");
@@ -22,7 +22,7 @@ export default function useWallet() {
 		setCurrentAccount(account);
 	}, []);
 
-	const connectWallet = React.useCallback(async () => {
+	const connectWallet = useCallback(async () => {
 		const { ethereum } = window;
 		if (!ethereum) {
 			alert("Get MetaMask!");
@@ -35,7 +35,7 @@ export default function useWallet() {
 		setCurrentAccount(accounts[0]);
 	}, []);
 
-	React.useEffect(() => {
+	useEffect(() => {
 		checkIfWalletIsConnected();
 	}, []);
 
