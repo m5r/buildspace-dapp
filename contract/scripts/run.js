@@ -9,14 +9,14 @@ const main = async () => {
 	let contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
 	console.log("Contract balance:", hre.ethers.utils.formatEther(contractBalance));
 
-	const waveTxn = await waveContract.wave("A message!");
+	let waveTxn = await waveContract.wave("This is wave #1");
+	await waveTxn.wait();
+
+	waveTxn = await waveContract.wave("This is wave #2");
 	await waveTxn.wait();
 
 	contractBalance = await hre.ethers.provider.getBalance(waveContract.address);
-	console.log(
-		"Contract balance:",
-		hre.ethers.utils.formatEther(contractBalance),
-	);
+	console.log("Contract balance:", hre.ethers.utils.formatEther(contractBalance));
 
 	const allWaves = await waveContract.getAllWaves();
 	console.log(allWaves);
