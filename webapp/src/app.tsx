@@ -8,7 +8,8 @@ import "./app.css";
 
 export default function App() {
 	const { wallet, connectWallet } = useWallet();
-	const { wave, isWaving } = useWave();
+	const { waves, wave, isWaving } = useWave();
+	const [message, setMessage] = React.useState("");
 
 	return (
 		<div className="mainContainer">
@@ -24,7 +25,25 @@ export default function App() {
 
 				<Counter />
 
-				<button className="waveButton" onClick={wave}>
+				<input
+					type="text"
+					value={message}
+					placeholder="What's on your mind?"
+					disabled={isWaving}
+					onChange={e => !isWaving && setMessage(e.target.value)}
+				/>
+				<button className="waveButton" onClick={async () => {
+					if (isWaving) {
+						return;
+					}
+
+					if (!message) {
+						return;
+					}
+
+					await wave(message);
+					setMessage("");
+				}}>
 					{isWaving ? "Waving..." : "Wave at Me"}
 				</button>
 
@@ -33,6 +52,15 @@ export default function App() {
 						Connect Wallet
 					</button>
 				) : null}
+
+				{waves.map((wave) => {
+					return (
+						<div key={`${wave.address}-${wave.timestamp.toString()}`} style={{ backgroundColor: "OldLace", marginTop: "16px", padding: "8px" }}>
+							<div>Address: {wave.address}</div>
+							<div>Time: {wave.timestamp.toString()}</div>
+							<div>Message: {wave.message}</div>
+						</div>)
+				})}
 			</div>
 		</div>
 	);
