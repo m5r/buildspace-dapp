@@ -5,11 +5,12 @@ import useWave from "../hooks/use-wave";
 
 export default function Counter() {
 	const { wallet } = useWallet();
+	const { isFetchingCount, count } = useWave();
 
 	return (
 		<div className="bio">
 			{wallet ? (
-				false ? <span>Loading...</span> : <span>You waved {0} times in total!</span>
+				isFetchingCount ? <span>Loading...</span> : <span>You waved {count} times in total!</span>
 			) : null}
 		</div>
 	);

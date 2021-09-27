@@ -13,7 +13,6 @@ export default function useContract({ address, abi }: Params) {
 	useEffect(() => {
 		const { ethereum } = window;
 		if (!ethereum) {
-			console.log("Ethereum object doesn't exist!");
 			return;
 		}
 

@@ -11,9 +11,7 @@ export default function useWave() {
 	const [count, setCount] = useAtom(countAtom);
 	const [isFetchingCount, setIsFetchingCount] = useAtom(fetchingCountAtom);
 	const fetchCount = useCallback(async () => {
-		console.log("fetch count");
-		console.log("count wavePortalContract", wavePortalContract);
-		if (!wavePortalContract || isFetchingCount) {
+		if (!wavePortalContract || !wallet || isFetchingCount) {
 			return;
 		}
 
@@ -24,39 +22,32 @@ export default function useWave() {
 	}, [wavePortalContract, isFetchingCount]);
 	useEffect(() => {
 		fetchCount();
-	}, []);
+	}, [wallet]);
 
 	const [waves, setWaves] = useAtom(wavesAtom);
 	const [isFetchingWaves, setIsFetchingWaves] = useAtom(fetchingWavesAtom);
 	const fetchWaves = useCallback(async () => {
-		console.log("fetch waves");
-		console.log("wavePortalContract", wavePortalContract);
-		console.log("wallet", wallet);
-		console.log("isFetchingWaves", isFetchingWaves);
 		if (!wavePortalContract || !wallet || isFetchingWaves) {
 			return;
 		}
 
 		setIsFetchingWaves(true);
 		const rawWaves = await wavePortalContract.getAllWaves();
-		console.log("rawWaves", rawWaves);
 		const waves = rawWaves.map((rawWave: any) => ({
 			address: rawWave.waver,
 			timestamp: new Date(rawWave.timestamp * 1000),
 			message: rawWave.message,
 		}));
 		setWaves(waves);
-		console.log("waves", waves);
 		setIsFetchingWaves(false);
 	}, [wavePortalContract, wallet, isFetchingWaves]);
 	useEffect(() => {
 		fetchWaves();
-	}, []);
+	}, [wallet]);
 
 	const [isWaving, setIsWaving] = useState(false);
 	const wave = useCallback(async (message: string) => {
 		if (!wavePortalContract) {
-			console.log("Connection to contract is not ready yet")
 			return;
 		}
 
@@ -64,13 +55,24 @@ export default function useWave() {
 			return;
 		}
 		setIsWaving(true);
-		const waveTxn = await wavePortalContract.wave(message);
-		console.log("Mining...", waveTxn.hash);
+		const waveTxn = await wavePortalContract.wave(message, { gasLimit: 300000 });
 		await waveTxn.wait();
-		console.log("Mined -- ", waveTxn.hash);
-		await Promise.all([fetchCount(), fetchWaves()]);
 		setIsWaving(false);
 	}, [wavePortalContract, isWaving, fetchCount, fetchWaves]);
+
+	useEffect(() => {
+		if (!wavePortalContract) {
+			return;
+		}
+
+		async function onNewWaveHandler() {
+			await Promise.all([fetchCount(), fetchWaves()]);
+		}
+
+		wavePortalContract.on("NewWave", onNewWaveHandler);
+
+		return () => void wavePortalContract.off("NewWave", onNewWaveHandler);
+	}, [fetchCount, fetchWaves, wavePortalContract]);
 
 	return {
 		wave,
